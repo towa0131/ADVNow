@@ -90,21 +90,23 @@ namespace ADVNow.ViewModels
             // デバッグ用
             this.ClickCommand = new DelegateCommand(async () =>
             {
-                List<NovelGame> games = await this.API.SearchGames("あ");
+                List<NovelGame> games = await this.API.SearchGames("妹");
                 foreach (NovelGame game in games)
                 {
-
                     Brand brand = await this.API.SearchBrandById(game.BrandId.Value);
                     Game g = new Game()
                     {
                         Title = game?.Title ?? "",
                         Brand = brand?.Name ?? "",
                         SellDay = game.SellDay?.ToString("yyyy年MM月"),
-                        LastPlay = new DateTime(0).ToString("yyyy年MM月dd日"),
+                        LastPlay = DateTime.Now.ToString("yyyy年MM月dd日"),
                         TotalPlayMinutes = 0
                     };
                     this.AllGames.Add(g);
-                    if (!this.ShowList.Contains(brand.Name))
+                    if (brand == null)
+                    {
+                        this.ShowList.Add("不明");
+                    } else if (!this.ShowList.Contains(brand.Name))
                     {
                         this.ShowList.Add(brand.Name);
                     }

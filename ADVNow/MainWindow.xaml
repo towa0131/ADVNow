@@ -70,7 +70,7 @@
 
                 <ComboBox
                 DockPanel.Dock="Top"
-                x:Name="ColorPresetsComboBox"
+                x:Name="ListComboBox"
                 Width="180"
                 HorizontalAlignment="Center"
                 Margin="0 0 0 12"
