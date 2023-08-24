@@ -22,8 +22,6 @@ using Reactive.Bindings.Helpers;
 using Reactive.Bindings.Extensions;
 using ADVNow.Models;
 using ADVNow.Commands;
-using ADVNow.Views;
-using static DiscordRPC.User;
 using System.IO;
 using NovelGameLib.Database;
 using NovelGameLib;
