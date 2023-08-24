@@ -1,0 +1,19 @@
+﻿<Window x:Class="ADVNow.Views.DBInitializeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ADVNow.Views"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        mc:Ignorable="d"
+        Title="DBInitializeWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center">
+            <TextBlock Text="データベースを更新中..." Style="{StaticResource TitleTextBlockStyle}" Margin="150"/>
+            <ui:ProgressRing>
+                
+            </ui:ProgressRing>
+        </StackPanel>
+    </Grid>
+</Window>
