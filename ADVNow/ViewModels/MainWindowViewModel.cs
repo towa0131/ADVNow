@@ -96,7 +96,6 @@ namespace ADVNow.ViewModels
             }
 
             // UserData
-
             string userDBFile = documentFolder + "\\user.db";
             var connectionstring = new SQLiteConnectionStringBuilder
             {

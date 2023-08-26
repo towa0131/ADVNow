@@ -41,6 +41,7 @@
                 <MenuItem
                     x:Name="files"
                     Header="ファイル(_F)">
+                    <MenuItem x:Name="add" Header="追加(_A)" Command="{Binding AddGameCmd}" />
                     <MenuItem x:Name="exit" Header="終了(_X)" Command="{Binding ExitCmd}" />
                 </MenuItem>
                 <MenuItem
