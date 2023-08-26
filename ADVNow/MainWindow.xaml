@@ -47,9 +47,10 @@
                     x:Name="settings"
                     Header="設定(_S)">
                     <MenuItem x:Name="background" Header="背景画像を設定(_B)" Command="{Binding SetBackgroundCmd}" />
-                    <ui:RadioMenuItem
+                    <MenuItem
                         Header="Discordにステータスを表示(_D)"
-                        IsChecked="True" />
+                        IsCheckable="True"
+                        IsChecked="{Binding DiscordStatus.Value}" />
                 </MenuItem>
             </Menu>
         </Grid>

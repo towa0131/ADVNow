@@ -27,6 +27,10 @@ using NovelGameLib.Database;
 using NovelGameLib;
 using NovelGameLib.Entity;
 using System.Linq;
+using SqlKata;
+using SqlKata.Execution;
+using SqlKata.Compilers;
+using System.Data.SQLite;
 
 namespace ADVNow.ViewModels
 {
@@ -48,7 +52,11 @@ namespace ADVNow.ViewModels
 
         public NovelGameAPI API { get; set; }
 
+        public UserData UserData;
+
         public ReactiveProperty<string> BackgroundImage { get; set; }
+
+        public ReactiveProperty<bool> DiscordStatus { get; set; }
 
         public ReactiveCollection<string> BrandList { get; set; } = new ReactiveCollection<string>();
 
@@ -60,6 +68,8 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<int> SelectedList { get; set; } = new ReactiveProperty<int>();
 
+        private QueryFactory db;
+
         public MainWindowViewModel()
         {
             string documentFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
@@ -67,25 +77,63 @@ namespace ADVNow.ViewModels
             {
                 Directory.CreateDirectory(documentFolder);
             }
-            string dbFile = documentFolder + "\\games.db";
-            if (!File.Exists(dbFile))
+            string gameDBFile = documentFolder + "\\games.db";
+            if (File.Exists(gameDBFile))
+            {
+                this.API = new NovelGameAPI(new SQLiteDatabase(gameDBFile));
+            }
+            else
             {
                 this.API = new NovelGameAPI(new ErogameScapeDatabase());
                 Task downloadTask = new Task(async () =>
                 {
                     IExportableDatabase db = new ErogameScapeDatabase();
-                    await db.ExportToSQLite3(dbFile);
+                    await db.ExportToSQLite3(gameDBFile);
                     GC.Collect();
-                    this.API = new NovelGameAPI(new SQLiteDatabase(dbFile));
+                    this.API = new NovelGameAPI(new SQLiteDatabase(gameDBFile));
                 });
                 downloadTask.Start();
             }
+
+            // UserData
+
+            string userDBFile = documentFolder + "\\user.db";
+            var connectionstring = new SQLiteConnectionStringBuilder
+            {
+                DataSource = userDBFile
+            };
+
+            SQLiteConnection connection = new SQLiteConnection(connectionstring.ToString());
+            SqliteCompiler compiler = new SqliteCompiler();
+
+            connection.Open();
+
+            this.db = new QueryFactory(connection, compiler);
+
+            SQLiteCommand command = new SQLiteCommand(connection);
+
+            command.CommandText = "CREATE TABLE IF NOT EXISTS user(" +
+                "Background TEXT, " +
+                "DiscordStatus BOOL)";
+            if (command.ExecuteNonQuery() != -1)
+            {
+                this.UserData = new UserData()
+                {
+                    Background = "",
+                    DiscordStatus = true
+                };
+                this.db.Query("user").Insert(this.UserData);
+            }
             else
             {
-                this.API = new NovelGameAPI(new SQLiteDatabase(dbFile));
+                this.UserData = this.db.Query("user").First<UserData>();
             }
 
-            this.BackgroundImage = new ReactiveProperty<string>(documentFolder + "\\background.png");
+            this.BackgroundImage = ReactiveProperty.FromObject(this.UserData, x => x.Background);
+            this.DiscordStatus = ReactiveProperty.FromObject(this.UserData, x => x.DiscordStatus);
+            this.BackgroundImage.Subscribe((x) => this.db.Query("user").Update(this.UserData));
+            this.DiscordStatus.Subscribe((x) => this.db.Query("user").Update(this.UserData));
+
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
 
@@ -115,6 +163,7 @@ namespace ADVNow.ViewModels
                 }
             }, canExcuteCommand);
 
+            // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
             this.ExitCmd = new ExitCommand();
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
