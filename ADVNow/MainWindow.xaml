@@ -84,7 +84,16 @@
                     DockPanel.Dock="Top"
                     Content="でばっぐぼたん"
                     HorizontalAlignment="Center"
-                     Margin="0 0 0 12" />
+                    Margin="0 0 0 12" />
+
+                <Button x:Name="addButton"
+                    Command="{Binding AddGameCmd}"
+                    DockPanel.Dock="Top"
+                    Content="追加"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Width="100"
+                    Margin="0 0 0 12" />
 
                 <ui:ListView
                 x:Name="PagesList"

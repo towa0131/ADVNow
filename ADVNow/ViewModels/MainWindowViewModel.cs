@@ -36,13 +36,15 @@ namespace ADVNow.ViewModels
 
         public ReactiveCollection<Game> Games { get; set; } = new ReactiveCollection<Game>();
 
-        public DelegateCommand ClickCommand { get; set; }
+        public ICommand ClickCommand { get; set; }
 
-        public UpdateGameListCommand UpdateGameListCmd { get; set; }
+        public ICommand UpdateGameListCmd { get; set; }
 
-        public ExitCommand ExitCmd { get; set; }
+        public ICommand ExitCmd { get; set; }
 
-        public SetBackgroundCommand SetBackgroundCmd { get; set; }
+        public ICommand SetBackgroundCmd { get; set; }
+
+        public ICommand AddGameCmd { get; set; }
 
         public NovelGameAPI API { get; set; }
 
@@ -116,6 +118,7 @@ namespace ADVNow.ViewModels
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
             this.ExitCmd = new ExitCommand();
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
+            this.AddGameCmd = new AddGameCommand(this);
 
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
             {
