@@ -141,32 +141,6 @@ namespace ADVNow.ViewModels
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
 
-            // デバッグ用
-            this.ClickCommand = new DelegateCommand(async () =>
-            {
-                List<NovelGame> games = await this.API.SearchGames("妹");
-                foreach (NovelGame game in games)
-                {
-                    Brand brand = await this.API.SearchBrandById(game.BrandId.Value);
-                    Game g = new Game()
-                    {
-                        Title = game?.Title ?? "",
-                        Brand = brand?.Name ?? "",
-                        SellDay = game.SellDay ?? new DateTime(0),
-                        LastPlay = DateTime.Now,
-                        TotalPlayMinutes = 0
-                    };
-                    this.AllGames.Add(g);
-                    if (brand == null)
-                    {
-                        this.ShowList.Add("不明");
-                    } else if (!this.ShowList.Contains(brand.Name))
-                    {
-                        this.ShowList.Add(brand.Name);
-                    }
-                }
-            }, canExcuteCommand);
-
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
             this.ExitCmd = new ExitCommand();

@@ -81,13 +81,6 @@
                     <ComboBoxItem Tag="brand" Content="発売年"/>
                 </ComboBox>
 
-                <Button x:Name="debugButton"
-                    Command="{Binding ClickCommand}"
-                    DockPanel.Dock="Top"
-                    Content="でばっぐぼたん"
-                    HorizontalAlignment="Center"
-                    Margin="0 0 0 12" />
-
                 <Button x:Name="addButton"
                     Command="{Binding AddGameCmd}"
                     DockPanel.Dock="Top"
