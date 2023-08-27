@@ -215,8 +215,10 @@ namespace ADVNow.ViewModels
 
             this.AllGames.ObserveReplaceChanged().Subscribe((pair) =>
             {
-                this.Games.Remove(pair.OldItem);
-                this.Games.Add(pair.NewItem);
+                if (this.Games.ToList().Contains(pair.OldItem)) {
+                    this.Games.Remove(pair.OldItem);
+                    this.Games.Add(pair.NewItem);
+                }
                 this.db.Query("games").Where("Title", pair.OldItem.Title).Delete();
                 this.db.Query("games").Insert(pair.NewItem);
             });
