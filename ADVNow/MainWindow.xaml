@@ -148,6 +148,7 @@
                     IsReadOnly="True"
                     SelectionMode="Single"
                     SelectionUnit="FullRow"
+                    SelectedItem="{Binding CurrentGame.Value}"
                     Opacity="0.55"
                     ItemsSource="{Binding Games}">
                     <DataGrid.CellStyle>
@@ -159,13 +160,15 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="タイトル"  Binding="{Binding Title}" Width="3*"/>
                         <DataGridTextColumn Header="ブランド" Binding="{Binding Brand}" Width="1*"/>
-                        <DataGridTextColumn Header="最終プレイ" Binding="{Binding LastPlay}" Width="1.5*"/>
-                        <DataGridTextColumn Header="発売年月" Binding="{Binding SellDay}" Width="1*"/>
+                        <DataGridTextColumn Header="最終プレイ" Binding="{Binding LastPlayString}" Width="1.5*"/>
+                        <DataGridTextColumn Header="発売年月" Binding="{Binding SellDayString}" Width="1*"/>
                         <DataGridTextColumn Header="プレイ時間" Binding="{Binding TotalPlayString}" Width="1*"/>
                         <DataGridTemplateColumn Width="0.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ui:AppBarButton x:Name="PlayButton" LabelPosition="Collapsed"  Width="40">
+                                    <ui:AppBarButton x:Name="PlayButton"
+                                                     LabelPosition="Collapsed"
+                                                     Width="40">
                                         <ui:AppBarButton.Icon>
                                             <ui:FontIcon Glyph="&#xE768;" Margin="0 0 0 -3" />
                                         </ui:AppBarButton.Icon>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlKata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,9 @@ namespace ADVNow.Models
 
         public string Path { get; set; } = "";
 
-        public int TotalPlayMinutes { get; set; }
+        public int TotalPlayMinutes { get; set; } = 0;
 
+        [Ignore]
         public string TotalPlayString
         {
             get
@@ -26,9 +28,26 @@ namespace ADVNow.Models
             }
         }
 
-        public string LastPlay { get; set; }
+        public DateTime LastPlay { get; set; }
 
-        public string SellDay { get; set; }
+        [Ignore]
+        public string LastPlayString {
+            get
+            {
+                return LastPlay.ToString("yyyy年MM月dd日");
+            }
+        }
+
+        public DateTime SellDay { get; set; }
+
+        [Ignore]
+        public string SellDayString
+        {
+            get
+            {
+                return this.SellDay.ToString("yyyy年MM月");
+            }
+        }
 
     }
 }

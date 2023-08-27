@@ -39,8 +39,25 @@ namespace ADVNow.Commands
             }
             else
             {
-                MessageBox.Show(gameStr + " を追加しました。");
-                this._vm.CloseWindowAction();
+                if (game.BrandId.HasValue)
+                {
+                    this._vm.CloseWindowAction();
+                    Brand brand = await this._vm._mainVM.API.SearchBrandById(game.BrandId.Value);
+                    Game g = new Game()
+                    {
+                        Title = game?.Title ?? "",
+                        Brand = brand?.Name ?? "",
+                        SellDay = game.SellDay ?? new DateTime(0),
+                        LastPlay = DateTime.Now,
+                        TotalPlayMinutes = 0
+                    };
+                    this._vm._mainVM.AllGames.Add(g);
+                    MessageBox.Show(gameStr + " を追加しました。");
+                }
+                else
+                {
+                    MessageBox.Show("ブランドが見つかりませんでした。");
+                }
             }
         }
     }

@@ -43,7 +43,7 @@ namespace ADVNow.Commands
                 case 1:
                     foreach (Game game in games)
                     {
-                        int year = Convert.ToInt32(DateTime.Parse(game.SellDay).ToString("yyyy"));
+                        int year = Convert.ToInt32(game.SellDay.ToString("yyyy"));
                         if (this._vm.SelectedList.Value == 0 || this._vm.YearList[this._vm.SelectedList.Value - 1] == year)
                         {
                             this._vm.Games.Add(game);

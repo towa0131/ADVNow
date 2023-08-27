@@ -68,6 +68,8 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<int> SelectedList { get; set; } = new ReactiveProperty<int>();
 
+        public ReactiveProperty<Game> CurrentGame { get; set ;} = new ReactiveProperty<Game>();
+
         private QueryFactory db;
 
         public MainWindowViewModel()
@@ -111,6 +113,7 @@ namespace ADVNow.ViewModels
 
             SQLiteCommand command = new SQLiteCommand(connection);
 
+            // Load User Data
             command.CommandText = "CREATE TABLE IF NOT EXISTS user(" +
                 "Background TEXT, " +
                 "DiscordStatus BOOL)";
@@ -147,8 +150,8 @@ namespace ADVNow.ViewModels
                     {
                         Title = game?.Title ?? "",
                         Brand = brand?.Name ?? "",
-                        SellDay = game.SellDay?.ToString("yyyy年MM月"),
-                        LastPlay = DateTime.Now.ToString("yyyy年MM月dd日"),
+                        SellDay = game.SellDay ?? new DateTime(0),
+                        LastPlay = DateTime.Now,
                         TotalPlayMinutes = 0
                     };
                     this.AllGames.Add(g);
@@ -168,28 +171,35 @@ namespace ADVNow.ViewModels
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
             this.AddGameCmd = new AddGameCommand(this);
 
+            // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
             {
                 if (!this.BrandList.Contains(game.Brand))
                 {
                     this.BrandList.Add(game.Brand);
+                    if (this.ShowType.Value == 0) this.ShowList.Add(game.Brand);
                 }
-                int year = Convert.ToInt32(DateTime.Parse(game.SellDay).ToString("yyyy"));
+                int year = Convert.ToInt32(game.SellDay.ToString("yyyy"));
                 if (!this.YearList.Contains(year))
                 {
                     this.YearList.Add(year);
+                    if (this.ShowType.Value == 1) this.ShowList.Add(year.ToString() + "年");
                 }
                 this.UpdateGameListCmd.Execute(new List<Game> { game });
+                if (this.db.Query("games").Where("Title", game.Title).Get<Game>().ToList().Count() == 0)
+                {
+                    this.db.Query("games").Insert(game);
+                }
             });
 
             this.AllGames.ObserveRemoveChanged().Subscribe((game) => 
             {
                 bool flagBrand = true;
                 bool flagYear = true;
-                int year = Convert.ToInt32(DateTime.Parse(game.SellDay).ToString("yyyy"));
+                int year = Convert.ToInt32(game.SellDay.ToString("yyyy"));
                 foreach (Game g in this.AllGames)
                 {
-                    int gYear = Convert.ToInt32(DateTime.Parse(g.SellDay).ToString("yyyy"));
+                    int gYear = Convert.ToInt32(g.SellDay.ToString("yyyy"));
                     if (g.Brand == game.Brand) flagBrand = false;
                     if (year == gYear) flagYear = false;
                 }
@@ -229,6 +239,21 @@ namespace ADVNow.ViewModels
                 this.Games.Clear();
                 this.UpdateGameListCmd.Execute(this.AllGames.ToList());
             });
+
+            // Load All Games
+            command.CommandText = "CREATE TABLE IF NOT EXISTS games(" +
+            "Title TEXT, " +
+            "Brand TEXT, " +
+            "Path TEXT, " +
+            "TotalPlayMinutes INTEGER, " +
+            "LastPlay DATE, " +
+            "SellDay DATE)";
+            command.ExecuteNonQuery();
+            List<Game> games = this.db.Query("games").Get<Game>().ToList();
+            foreach (Game game in games)
+            {
+                this.AllGames.Add(game);
+            }
         }
 
         public bool canExcuteCommand()

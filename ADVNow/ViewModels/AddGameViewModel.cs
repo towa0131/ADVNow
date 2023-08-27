@@ -64,7 +64,10 @@ namespace ADVNow.ViewModels
                 List<NovelGame> games = await this._mainVM.API.SearchGames(t);
                 foreach (NovelGame game in games)
                 {
-                    this.SuggestedGameStrings.Add(game.Title);
+                    if (!this.SuggestedGameStrings.ToList().Contains(game.Title))
+                    {
+                        this.SuggestedGameStrings.Add(game.Title);
+                    }
                 }
             });
         }
