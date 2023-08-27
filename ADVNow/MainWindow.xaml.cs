@@ -27,5 +27,10 @@ namespace ADVNow
             InitializeComponent();
             this.DataContext = new MainWindowViewModel();
         }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowViewModel)this.DataContext).LaunchGameCmd.Execute(null);
+        }
     }
 }

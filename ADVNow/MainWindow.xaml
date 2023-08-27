@@ -168,7 +168,8 @@
                                 <DataTemplate>
                                     <ui:AppBarButton x:Name="PlayButton"
                                                      LabelPosition="Collapsed"
-                                                     Width="40">
+                                                     Width="40"
+                                                     Click="PlayButton_Click">
                                         <ui:AppBarButton.Icon>
                                             <ui:FontIcon Glyph="&#xE768;" Margin="0 0 0 -3" />
                                         </ui:AppBarButton.Icon>

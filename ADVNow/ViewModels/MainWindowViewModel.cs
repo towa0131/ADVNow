@@ -50,6 +50,8 @@ namespace ADVNow.ViewModels
 
         public ICommand AddGameCmd { get; set; }
 
+        public ICommand LaunchGameCmd { get; set; }
+
         public NovelGameAPI API { get; set; }
 
         public UserData UserData;
@@ -170,6 +172,7 @@ namespace ADVNow.ViewModels
             this.ExitCmd = new ExitCommand();
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
             this.AddGameCmd = new AddGameCommand(this);
+            this.LaunchGameCmd = new LaunchGameCommand(this);
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>

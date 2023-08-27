@@ -33,9 +33,15 @@ namespace ADVNow.Commands
         {
             string gameStr = this._vm.SearchGameString.Value;
             NovelGame? game = await this._vm._mainVM.API.SearchGameByName(gameStr);
+            if (!System.IO.File.Exists(this._vm.Path.Value))
+            {
+                MessageBox.Show("実行ファイルが見つかりませんでした。");
+                return;
+            }
             if (game == null)
             {
-                MessageBox.Show("ゲームが見つかりません。");
+                MessageBox.Show("ゲームが見つかりませんでした。");
+                return;
             }
             else
             {
@@ -47,6 +53,7 @@ namespace ADVNow.Commands
                     {
                         Title = game?.Title ?? "",
                         Brand = brand?.Name ?? "",
+                        Path = this._vm.Path.Value,
                         SellDay = game.SellDay ?? new DateTime(0),
                         LastPlay = DateTime.Now,
                         TotalPlayMinutes = 0
