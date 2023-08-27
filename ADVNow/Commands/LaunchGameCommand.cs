@@ -98,12 +98,18 @@ namespace ADVNow.Commands
                         p.WaitForExit();
                         timer.EndInit();
                         this._rpcClient.Dispose();
-                        this._vm.PlayingGameString.Value = "---";
-                        this._vm.PlayingTimeString.Value = "";
-                        this._vm.AllGames.Remove(game);
                         game.TotalPlayMinutes += totalSec / 60;
                         game.LastPlay = DateTime.Now;
-                        this._vm.AllGames.Add(game);
+                        for (int i = 0; i < this._vm.AllGames.Count(); i++)
+                        {
+                            if (this._vm.AllGames[i].Title == game.Title)
+                            {
+                                this._vm.AllGames[i] = game;
+                                break;
+                            }
+                        }
+                        this._vm.PlayingGameString.Value = "---";
+                        this._vm.PlayingTimeString.Value = "";
                     });
                     launchTask.Start();
                 }

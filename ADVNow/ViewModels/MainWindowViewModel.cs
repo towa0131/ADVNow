@@ -191,18 +191,34 @@ namespace ADVNow.ViewModels
                 if (flagBrand)
                 {
                     this.BrandList.Remove(game.Brand);
-                    if (this.ShowType.Value == 0) this.ShowList.Remove(game.Brand);
+                    if (this.ShowType.Value == 0)
+                    {
+                        this.ShowList.Remove(game.Brand);
+                        this.SelectedList.Value = 0;
+                    }
                 }
                 if (flagYear)
                 {
                     this.YearList.Remove(year);
-                    if (this.ShowType.Value == 1) this.ShowList.Remove(game.SellDay.ToString("yyyy") + "年");
+                    if (this.ShowType.Value == 1)
+                    {
+                        this.ShowList.Remove(game.SellDay.ToString("yyyy") + "年");
+                        this.SelectedList.Value = 0;
+                    }
                 }
-                    if (this.Games.Contains(game))
+                if (this.Games.Contains(game))
                 {
                     this.Games.Remove(game);
                 }
                 this.db.Query("games").Where("Title", game.Title).Delete();
+            });
+
+            this.AllGames.ObserveReplaceChanged().Subscribe((pair) =>
+            {
+                this.Games.Remove(pair.OldItem);
+                this.Games.Add(pair.NewItem);
+                this.db.Query("games").Where("Title", pair.OldItem.Title).Delete();
+                this.db.Query("games").Insert(pair.NewItem);
             });
 
             this.ShowType.Subscribe((t) => {
