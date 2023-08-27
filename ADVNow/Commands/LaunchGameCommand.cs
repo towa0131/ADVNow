@@ -79,7 +79,7 @@ namespace ADVNow.Commands
                         });
                         if (ng != null)
                         {
-                            if (ng.OHP != null)
+                            if (Uri.IsWellFormedUriString(ng.OHP, UriKind.Absolute))
                             {
                                 this._rpcClient.SetButton(new Button()
                                 {
