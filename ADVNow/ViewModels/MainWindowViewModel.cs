@@ -70,12 +70,18 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<int> SelectedList { get; set; } = new ReactiveProperty<int>();
 
-        public ReactiveProperty<Game> CurrentGame { get; set ;} = new ReactiveProperty<Game>();
+        public ReactiveProperty<Game> CurrentGame { get; set;} = new ReactiveProperty<Game>();
+
+        public ReactiveProperty<string> PlayingGameString { get; set; } = new ReactiveProperty<string>();
+
+        public ReactiveProperty<string> PlayingTimeString { get; set; } = new ReactiveProperty<string>();
 
         private QueryFactory db;
 
         public MainWindowViewModel()
         {
+            BindingOperations.EnableCollectionSynchronization(this.Games, new object());
+            BindingOperations.EnableCollectionSynchronization(this.ShowList, new object());
             string documentFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
             if (!Directory.Exists(documentFolder))
             {
@@ -140,13 +146,15 @@ namespace ADVNow.ViewModels
 
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
+            this.PlayingGameString.Value = "---";
+            this.PlayingTimeString.Value = "";
 
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
             this.ExitCmd = new ExitCommand();
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
             this.AddGameCmd = new AddGameCommand(this);
-            this.LaunchGameCmd = new LaunchGameCommand(this);
+            this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155");
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
@@ -180,12 +188,21 @@ namespace ADVNow.ViewModels
                     if (g.Brand == game.Brand) flagBrand = false;
                     if (year == gYear) flagYear = false;
                 }
-                if (flagBrand) this.BrandList.Remove(game.Brand);
-                if (flagYear) this.YearList.Remove(year);
-                if (this.Games.Contains(game))
+                if (flagBrand)
+                {
+                    this.BrandList.Remove(game.Brand);
+                    if (this.ShowType.Value == 0) this.ShowList.Remove(game.Brand);
+                }
+                if (flagYear)
+                {
+                    this.YearList.Remove(year);
+                    if (this.ShowType.Value == 1) this.ShowList.Remove(game.SellDay.ToString("yyyy") + "年");
+                }
+                    if (this.Games.Contains(game))
                 {
                     this.Games.Remove(game);
                 }
+                this.db.Query("games").Where("Title", game.Title).Delete();
             });
 
             this.ShowType.Subscribe((t) => {

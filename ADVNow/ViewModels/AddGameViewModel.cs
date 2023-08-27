@@ -54,7 +54,7 @@ namespace ADVNow.ViewModels
         {
             this._mainVM = vm;
             this.SearchGameString.Value = "";
-            this.Path.Value = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
+            this.Path.Value = "";
             this.SelectGamePathCmd = new SelectGamePathCommand(this);
             this.AddNewGameCmd = new AddNewGameCommand(this);
             this.SearchGameString.Subscribe(async (t) =>

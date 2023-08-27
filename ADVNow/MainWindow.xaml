@@ -114,14 +114,16 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <TextBlock Text="○○○ をプレイ中"
+                    <TextBlock Text="{Binding PlayingGameString.Value}"
                                Style="{StaticResource TitleTextBlockStyle}"
                                VerticalAlignment="Center"
+                               Foreground="#333"
                                Margin="20 0 0 0" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <TextBlock Text="00:00:00"
+                    <TextBlock Text="{Binding PlayingTimeString.Value}"
                                Style="{StaticResource TitleTextBlockStyle}"
+                               Foreground="#333"
                                VerticalAlignment="Center" />
                 </Grid>
                 <Grid Grid.Column="2">
