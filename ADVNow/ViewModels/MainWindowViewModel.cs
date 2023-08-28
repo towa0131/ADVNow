@@ -280,6 +280,7 @@ namespace ADVNow.ViewModels
             this.SearchGameString.Subscribe((t) =>
             {
                 this.Games.Clear();
+                t = t.ToLower().Replace(" ", "");
                 if (t == "")
                 {
                     this.UpdateGameListCmd.Execute(this.AllGames.ToList());
@@ -288,7 +289,8 @@ namespace ADVNow.ViewModels
                 {
                     foreach (Game game in this.AllGames)
                     {
-                        if (game.Title.Contains(t) || game.Brand.Contains(t))
+                        if (game.Title.ToLower().Replace(" ", "").Contains(t) ||
+                            game.Brand.ToLower().Replace(" ", "").Contains(t))
                         {
                             this.Games.Add(game);
                         }
