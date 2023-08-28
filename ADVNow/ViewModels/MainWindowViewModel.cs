@@ -76,6 +76,8 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<string> PlayingTimeString { get; set; } = new ReactiveProperty<string>();
 
+        public ReactiveProperty<string> SearchGameString { get; set; } = new ReactiveProperty<string>();
+
         private QueryFactory db;
 
         public MainWindowViewModel()
@@ -148,6 +150,7 @@ namespace ADVNow.ViewModels
             this.SelectedList.Value = 0;
             this.PlayingGameString.Value = "---";
             this.PlayingTimeString.Value = "";
+            this.SearchGameString.Value = "";
 
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
@@ -250,6 +253,18 @@ namespace ADVNow.ViewModels
             {
                 this.Games.Clear();
                 this.UpdateGameListCmd.Execute(this.AllGames.ToList());
+            });
+
+            this.SearchGameString.Subscribe((t) =>
+            {
+                this.Games.Clear();
+                foreach (Game game in this.AllGames)
+                {
+                    if (game.Title.Contains(t) || game.Brand.Contains(t))
+                    {
+                        this.Games.Add(game);
+                    }
+                }
             });
 
             // Load All Games

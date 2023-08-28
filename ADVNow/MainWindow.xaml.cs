@@ -32,5 +32,21 @@ namespace ADVNow
         {
             ((MainWindowViewModel)this.DataContext).LaunchGameCmd.Execute(null);
         }
+
+        private void SearchGame_TextChanged(ModernWpf.Controls.AutoSuggestBox sender, ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == ModernWpf.Controls.AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                ((MainWindowViewModel)this.DataContext).SearchGameString.Value = sender.Text;
+            }
+        }
+
+        private void SearchGame_QuerySubmitted(ModernWpf.Controls.AutoSuggestBox sender, ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (args.ChosenSuggestion != null)
+            {
+                ((MainWindowViewModel)this.DataContext).SearchGameString.Value = sender.Text;
+            }
+        }
     }
 }

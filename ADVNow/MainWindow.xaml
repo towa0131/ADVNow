@@ -68,6 +68,9 @@
                 DockPanel.Dock="Top"
                 Margin="12"
                 PlaceholderText="検索"
+                Text="{Binding SearchGameString.Value}"
+                TextChanged="SearchGame_TextChanged"
+                QuerySubmitted="SearchGame_QuerySubmitted"
                 QueryIcon="Find"/>
 
                 <ComboBox
