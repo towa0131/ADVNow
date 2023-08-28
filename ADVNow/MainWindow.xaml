@@ -96,7 +96,6 @@
                 <ui:ListView
                 x:Name="PagesList"
                 DockPanel.Dock="Top"
-                SelectedValuePath="PageType"
                 ItemsSource="{Binding ShowList}"
                 SelectedIndex="{Binding SelectedList.Value}" />
             </DockPanel>
@@ -148,11 +147,19 @@
                     SelectionUnit="FullRow"
                     SelectedItem="{Binding CurrentGame.Value}"
                     Opacity="0.55"
+                    Foreground="#333"
                     ItemsSource="{Binding Games}">
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Background" Value="#ffffff" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="#333" />
+                                    <Setter Property="Background" Value="White" />
+                                    <Setter Property="BorderBrush" Value="White" />
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGrid.CellStyle>
                     <DataGrid.Columns>
@@ -162,6 +169,11 @@
                         <DataGridTextColumn Header="発売年月" Binding="{Binding SellDayString}" Width="1*"/>
                         <DataGridTextColumn Header="プレイ時間" Binding="{Binding TotalPlayString}" Width="1*"/>
                         <DataGridTemplateColumn Width="0.5*">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="SeparatorBrush" Value="Transparent" />
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ui:AppBarButton x:Name="PlayButton"
@@ -170,6 +182,25 @@
                                                      Click="PlayButton_Click">
                                         <ui:AppBarButton.Icon>
                                             <ui:FontIcon Glyph="&#xE768;" Margin="0 0 0 -3" />
+                                        </ui:AppBarButton.Icon>
+                                    </ui:AppBarButton>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="0.5*">
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="SeparatorBrush" Value="Transparent" />
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ui:AppBarButton x:Name="SettingButton"
+                                                     LabelPosition="Collapsed"
+                                                     Width="40"
+                                                     Click="RemoveButton_Click">>
+                                        <ui:AppBarButton.Icon>
+                                            <ui:FontIcon Glyph="&#xE74D;" Margin="0 0 0 -3" />
                                         </ui:AppBarButton.Icon>
                                     </ui:AppBarButton>
                                 </DataTemplate>

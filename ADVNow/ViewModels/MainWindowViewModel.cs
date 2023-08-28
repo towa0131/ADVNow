@@ -52,6 +52,8 @@ namespace ADVNow.ViewModels
 
         public ICommand LaunchGameCmd { get; set; }
 
+        public ICommand RemoveGameCmd { get; set; }
+
         public NovelGameAPI API { get; set; }
 
         public UserData UserData;
@@ -158,6 +160,7 @@ namespace ADVNow.ViewModels
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
             this.AddGameCmd = new AddGameCommand(this);
             this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155");
+            this.RemoveGameCmd = new RemoveGameCommand(this);
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
@@ -245,8 +248,6 @@ namespace ADVNow.ViewModels
                         }
                         break;
                 }
-                this.Games.Clear();
-                this.UpdateGameListCmd.Execute(this.AllGames.ToList());
             });
 
             this.SelectedList.Subscribe((i) =>

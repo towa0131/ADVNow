@@ -30,6 +30,7 @@ namespace ADVNow.Commands
         {
             List<Game> games = parameter as List<Game>;
             int type = this._vm.ShowType.Value;
+            if (this._vm.SelectedList.Value == -1) return;
             switch (type)
             {
                 case 0:

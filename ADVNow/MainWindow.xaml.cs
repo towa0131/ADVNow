@@ -33,6 +33,11 @@ namespace ADVNow
             ((MainWindowViewModel)this.DataContext).LaunchGameCmd.Execute(null);
         }
 
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowViewModel)this.DataContext).RemoveGameCmd.Execute(null);
+        }
+
         private void SearchGame_TextChanged(ModernWpf.Controls.AutoSuggestBox sender, ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == ModernWpf.Controls.AutoSuggestionBoxTextChangeReason.UserInput)
