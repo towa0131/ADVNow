@@ -167,14 +167,35 @@ namespace ADVNow.ViewModels
             {
                 if (!this.BrandList.Contains(game.Brand))
                 {
-                    this.BrandList.Add(game.Brand);
-                    if (this.ShowType.Value == 0) this.ShowList.Add(game.Brand);
+                    int minIndex = 0;
+                    for (int i = 0; i < this.BrandList.Count(); i++)
+                    {
+                        if (this.BrandList[i].CompareTo(game.Brand) == 1)
+                        {
+                            minIndex = i;
+                            break;
+                        }
+                    }
+                    this.BrandList.Insert(minIndex, game.Brand);
+                    if (this.ShowType.Value == 0)
+                    {
+                        this.ShowList.Insert(minIndex + 1, game.Brand);
+                    }
                 }
                 int year = Convert.ToInt32(game.SellDay.ToString("yyyy"));
                 if (!this.YearList.Contains(year))
                 {
-                    this.YearList.Add(year);
-                    if (this.ShowType.Value == 1) this.ShowList.Add(year.ToString() + "年");
+                    int minIndex = this.YearList.Count();
+                    for (int i = 0; i < this.YearList.Count(); i++)
+                    {
+                        if (this.YearList[i] < year)
+                        {
+                            minIndex = i;
+                            break;
+                        }
+                    }
+                    this.YearList.Insert(minIndex, year);
+                    if (this.ShowType.Value == 1) this.ShowList.Insert(minIndex + 1, year.ToString() + "年");
                 }
                 this.UpdateGameListCmd.Execute(new List<Game> { game });
                 if (this.db.Query("games").Where("Title", game.Title).Get<Game>().ToList().Count() == 0)
