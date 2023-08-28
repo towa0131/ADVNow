@@ -32,19 +32,28 @@ namespace ADVNow.Commands
         public async void Execute(object parameter)
         {
             string gameStr = this._vm.SearchGameString.Value;
-            NovelGame game = (await this._vm._mainVM.API.SearchGames(gameStr)).Where(game => game.Model == "PC").First();
+            List<NovelGame> games = (await this._vm._mainVM.API.SearchGames(gameStr)).Where(game => game.Model == "PC" && game.Title == gameStr).ToList();
             if (!System.IO.File.Exists(this._vm.Path.Value))
             {
                 MessageBox.Show("実行ファイルが見つかりませんでした。");
                 return;
             }
-            if (game == null)
+            if (games.Count() == 0)
             {
                 MessageBox.Show("ゲームが見つかりませんでした。");
                 return;
             }
             else
             {
+                NovelGame game = games.First();
+                foreach (Game g in this._vm._mainVM.AllGames)
+                {
+                    if (g.Id == game.Id)
+                    {
+                        MessageBox.Show(game.Title + "はすでに追加されています。");
+                        return;
+                    }
+                }
                 if (game.BrandId.HasValue)
                 {
                     this._vm.CloseWindowAction();
