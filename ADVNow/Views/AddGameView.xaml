@@ -24,14 +24,14 @@
             <TextBlock Text="実行ファイルのパス" Margin="0 10 0 10"/>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="5*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <TextBox x:Name="path" Text="{Binding Path.Value}" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <Button x:Name="pathButton" HorizontalAlignment="Center" Command="{Binding SelectGamePathCmd}" Content="参照" />
+                    <Button x:Name="pathButton" HorizontalAlignment="Right" Command="{Binding SelectGamePathCmd}" Content="参照" />
                 </Grid>
             </Grid>
             <Button x:Name="addButton"
