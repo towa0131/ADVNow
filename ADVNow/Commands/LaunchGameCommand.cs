@@ -24,7 +24,11 @@ namespace ADVNow.Commands
 
         private DiscordRpcClient _rpcClient;
 
-        public string _token;
+        private DateTime _startTime;
+
+        private bool _isShowing;
+
+        private string _token;
 
         public LaunchGameCommand(MainWindowViewModel vm, string token)
         {
@@ -39,6 +43,7 @@ namespace ADVNow.Commands
 
         public void Execute(object parameter)
         {
+            this._isShowing = this._vm.DiscordStatus.Value;
             Game game = this._vm.CurrentGame.Value;
             if (game != null)
             {
@@ -53,9 +58,21 @@ namespace ADVNow.Commands
                         _rpcClient = new DiscordRpcClient(this._token);
                         this._rpcClient.Initialize();
                         Timer timer = new Timer(1000);
+                        this._startTime = DateTime.UtcNow;
                         int totalSec = 0;
-                        timer.Elapsed += (sender, args) => {
-                            this._rpcClient.Invoke();
+                        timer.Elapsed += async (sender, args) => {
+                            if (this._isShowing != this._vm.DiscordStatus.Value)
+                            {
+                                this._isShowing = this._vm.DiscordStatus.Value;
+                                if (this._vm.DiscordStatus.Value)
+                                {
+                                    this.SetPresence(game);
+                                } else
+                                {
+                                    this._rpcClient.ClearPresence();
+                                }
+                            }
+                            if (this._isShowing) this._rpcClient.Invoke();
                             totalSec++;
                             int hour = totalSec / 3600;
                             int min = (totalSec % 3600) / 60;
@@ -63,37 +80,7 @@ namespace ADVNow.Commands
                             this._vm.PlayingTimeString.Value = String.Format("{0:D2}:{1:D2}:{2:D2}", hour, min, sec);
                         };
                         timer.Start();
-                        NovelGame? ng = await this._vm.API.SearchGameByName(game.Title);
-                        this._rpcClient.SetPresence(new RichPresence()
-                        {
-                            Details = game.Title + " をプレイ中",
-                            State = game.Brand,
-                            Timestamps = new Timestamps(DateTime.UtcNow),
-                            Buttons = new Button[1]
-                            {
-                                new Button()
-                                {
-                                    Url = "https://example.com",
-                                    Label = "Dummy"
-                                }
-                            }
-                        });
-                        if (ng != null)
-                        {
-                            if (Uri.IsWellFormedUriString(ng.OHP, UriKind.Absolute))
-                            {
-                                this._rpcClient.SetButton(new Button()
-                                {
-                                    Url = ng.OHP,
-                                    Label = "ホームページ"
-                                });
-                            }
-                            else
-                            {
-                                // Remove All Buttons
-                                this._rpcClient.UpdateButtons();
-                            }
-                        }
+                        if (this._isShowing) this.SetPresence(game);
                         this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                         this._vm.PlayingTimeString.Value = "00:00:00";
                         p?.WaitForExit();
@@ -117,6 +104,42 @@ namespace ADVNow.Commands
                 catch (Exception ex)
                 {
                     MessageBox.Show("ゲームを起動することができませんでした。\n" +  ex.Message);
+                }
+            }
+        }
+
+        private async void SetPresence(Game game)
+        {
+            RichPresence presence = new RichPresence()
+            {
+                Details = game.Title + " をプレイ中",
+                State = game.Brand,
+                Timestamps = new Timestamps(this._startTime),
+                Buttons = new Button[1]
+                {
+                    new Button()
+                    {
+                        Url = "https://example.com",
+                        Label = "Dummy"
+                    }
+                }
+            };
+            NovelGame? ng = await this._vm.API.SearchGameByName(game.Title);
+            this._rpcClient.SetPresence(presence);
+            if (ng != null)
+            {
+                if (Uri.IsWellFormedUriString(ng.OHP, UriKind.Absolute))
+                {
+                    this._rpcClient.SetButton(new Button()
+                    {
+                        Url = ng.OHP,
+                        Label = "ホームページ"
+                    });
+                }
+                else
+                {
+                    // Remove All Buttons
+                    this._rpcClient.UpdateButtons();
                 }
             }
         }
