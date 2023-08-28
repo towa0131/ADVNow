@@ -167,19 +167,19 @@ namespace ADVNow.ViewModels
             {
                 if (!this.BrandList.Contains(game.Brand))
                 {
-                    int minIndex = 0;
+                    int index = this.BrandList.Count();
                     for (int i = 0; i < this.BrandList.Count(); i++)
                     {
-                        if (this.BrandList[i].CompareTo(game.Brand) == 1)
+                        if (String.Compare(this.BrandList[i], game.Brand) > 0)
                         {
-                            minIndex = i;
+                            index = i;
                             break;
                         }
                     }
-                    this.BrandList.Insert(minIndex, game.Brand);
+                    this.BrandList.Insert(index, game.Brand);
                     if (this.ShowType.Value == 0)
                     {
-                        this.ShowList.Insert(minIndex + 1, game.Brand);
+                        this.ShowList.Insert(index + 1, game.Brand);
                     }
                 }
                 int year = Convert.ToInt32(game.SellDay.ToString("yyyy"));
