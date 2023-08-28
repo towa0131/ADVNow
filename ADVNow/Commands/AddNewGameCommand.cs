@@ -32,7 +32,7 @@ namespace ADVNow.Commands
         public async void Execute(object parameter)
         {
             string gameStr = this._vm.SearchGameString.Value;
-            NovelGame? game = await this._vm._mainVM.API.SearchGameByName(gameStr);
+            NovelGame game = (await this._vm._mainVM.API.SearchGames(gameStr)).Where(game => game.Model == "PC").First();
             if (!System.IO.File.Exists(this._vm.Path.Value))
             {
                 MessageBox.Show("実行ファイルが見つかりませんでした。");
@@ -52,6 +52,7 @@ namespace ADVNow.Commands
                     Game g = new Game()
                     {
                         Title = game?.Title ?? "",
+                        Id = game?.Id ?? -1,
                         Brand = brand?.Name ?? "",
                         Path = this._vm.Path.Value,
                         SellDay = game.SellDay ?? new DateTime(0),

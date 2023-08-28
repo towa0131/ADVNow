@@ -299,6 +299,7 @@ namespace ADVNow.ViewModels
             // Load All Games
             command.CommandText = "CREATE TABLE IF NOT EXISTS games(" +
             "Title TEXT, " +
+            "Id TEXT, " +
             "Brand TEXT, " +
             "Path TEXT, " +
             "TotalPlayMinutes INTEGER, " +

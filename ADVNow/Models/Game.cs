@@ -11,6 +11,8 @@ namespace ADVNow.Models
     {
         public string Title { get; set; } = "";
 
+        public int Id { get; set; } = -1;
+
         public string Brand { get; set; } = "";
 
         public string Path { get; set; } = "";

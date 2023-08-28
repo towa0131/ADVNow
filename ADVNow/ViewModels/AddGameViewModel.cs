@@ -40,8 +40,6 @@ namespace ADVNow.ViewModels
 
         public ReactiveCollection<string> SuggestedGameStrings { get; set; } = new ReactiveCollection<string>();
 
-        public ReactiveCollection<Game> SuggestedGames { get; set; } = new ReactiveCollection<Game>();
-
         public ICommand SelectGamePathCmd { get; set; }
 
         public ICommand AddNewGameCmd { get; set; }
@@ -64,7 +62,7 @@ namespace ADVNow.ViewModels
                 List<NovelGame> games = await this._mainVM.API.SearchGames(t);
                 foreach (NovelGame game in games)
                 {
-                    if (!this.SuggestedGameStrings.ToList().Contains(game.Title))
+                    if (!this.SuggestedGameStrings.ToList().Contains(game.Title) && game.Model == "PC")
                     {
                         this.SuggestedGameStrings.Add(game.Title);
                     }

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Timers;
 using NovelGameLib.Entity;
+using System.ComponentModel;
 
 namespace ADVNow.Commands
 {
@@ -48,7 +49,7 @@ namespace ADVNow.Commands
                         string path = game.Path;
                         ProcessStartInfo pinfo = new ProcessStartInfo();
                         pinfo.FileName = path;
-                        Process p = Process.Start(pinfo);
+                        Process? p = Process.Start(pinfo);
                         _rpcClient = new DiscordRpcClient(this._token);
                         this._rpcClient.Initialize();
                         Timer timer = new Timer(1000);
@@ -62,7 +63,7 @@ namespace ADVNow.Commands
                             this._vm.PlayingTimeString.Value = String.Format("{0:D2}:{1:D2}:{2:D2}", hour, min, sec);
                         };
                         timer.Start();
-                        NovelGame ng = await this._vm.API.SearchGameByName(game.Title);
+                        NovelGame? ng = await this._vm.API.SearchGameByName(game.Title);
                         this._rpcClient.SetPresence(new RichPresence()
                         {
                             Details = game.Title + " をプレイ中",
@@ -95,7 +96,7 @@ namespace ADVNow.Commands
                         }
                         this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                         this._vm.PlayingTimeString.Value = "00:00:00";
-                        p.WaitForExit();
+                        p?.WaitForExit();
                         timer.EndInit();
                         this._rpcClient.Dispose();
                         game.TotalPlayMinutes += totalSec / 60;
