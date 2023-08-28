@@ -259,11 +259,18 @@ namespace ADVNow.ViewModels
             this.SearchGameString.Subscribe((t) =>
             {
                 this.Games.Clear();
-                foreach (Game game in this.AllGames)
+                if (t == "")
                 {
-                    if (game.Title.Contains(t) || game.Brand.Contains(t))
+                    this.UpdateGameListCmd.Execute(this.AllGames.ToList());
+                }
+                else
+                {
+                    foreach (Game game in this.AllGames)
                     {
-                        this.Games.Add(game);
+                        if (game.Title.Contains(t) || game.Brand.Contains(t))
+                        {
+                            this.Games.Add(game);
+                        }
                     }
                 }
             });
