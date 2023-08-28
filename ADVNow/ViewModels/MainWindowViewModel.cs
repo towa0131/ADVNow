@@ -244,7 +244,7 @@ namespace ADVNow.ViewModels
             {
                 if (this.Games.ToList().Contains(pair.OldItem)) {
                     this.Games.Remove(pair.OldItem);
-                    this.Games.Add(pair.NewItem);
+                    this.Games.Insert(0, pair.NewItem);
                 }
                 this.db.Query("games").Where("Title", pair.OldItem.Title).Delete();
                 this.db.Query("games").Insert(pair.NewItem);
@@ -306,7 +306,7 @@ namespace ADVNow.ViewModels
             "LastPlay DATE, " +
             "SellDay DATE)";
             command.ExecuteNonQuery();
-            List<Game> games = this.db.Query("games").Get<Game>().ToList();
+            List<Game> games = this.db.Query("games").OrderByDesc("LastPlay").Get<Game>().ToList();
             foreach (Game game in games)
             {
                 this.AllGames.Add(game);
