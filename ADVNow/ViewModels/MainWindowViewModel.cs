@@ -92,7 +92,6 @@ namespace ADVNow.ViewModels
                 {
                     IExportableDatabase db = new ErogameScapeDatabase();
                     await db.ExportToSQLite3(gameDBFile);
-                    GC.Collect();
                     this.API = new NovelGameAPI(new SQLiteDatabase(gameDBFile));
                 });
                 downloadTask.Start();
