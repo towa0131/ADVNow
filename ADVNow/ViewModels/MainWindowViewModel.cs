@@ -136,14 +136,13 @@ namespace ADVNow.ViewModels
             this.DiscordStatus = ReactiveProperty.FromObject(this.UserData, x => x.DiscordStatus);
             this.BackgroundImage.Subscribe((x) => this.db.Query("user").Update(this.UserData));
             this.DiscordStatus.Subscribe((x) => this.db.Query("user").Update(this.UserData));
-            FileVersionInfo ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
 
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
             this.PlayingGameString.Value = "---";
             this.PlayingTimeString.Value = "";
             this.SearchGameString.Value = "";
-            this.VersionString.Value = "ADVNow Version " + ver.FileVersion;
+            this.VersionString.Value = "ADVNow Version " + Assembly.GetExecutingAssembly().GetName().Version;
 
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
