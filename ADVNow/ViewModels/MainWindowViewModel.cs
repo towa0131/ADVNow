@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Threading;
 using System.Reactive.Linq;
+using System.Reflection;
 using Reactive.Bindings;
-using Reactive.Bindings.Helpers;
 using Reactive.Bindings.Extensions;
 using ADVNow.Models;
 using ADVNow.Commands;
 using System.IO;
 using NovelGameLib.Database;
 using NovelGameLib;
-using NovelGameLib.Entity;
 using System.Linq;
-using SqlKata;
 using SqlKata.Execution;
 using SqlKata.Compilers;
 using System.Data.SQLite;
@@ -79,6 +66,8 @@ namespace ADVNow.ViewModels
         public ReactiveProperty<string> PlayingTimeString { get; set; } = new ReactiveProperty<string>();
 
         public ReactiveProperty<string> SearchGameString { get; set; } = new ReactiveProperty<string>();
+
+        public ReactiveProperty<string> VersionString { get; set; } = new ReactiveProperty<string>();
 
         private QueryFactory db;
 
@@ -147,12 +136,14 @@ namespace ADVNow.ViewModels
             this.DiscordStatus = ReactiveProperty.FromObject(this.UserData, x => x.DiscordStatus);
             this.BackgroundImage.Subscribe((x) => this.db.Query("user").Update(this.UserData));
             this.DiscordStatus.Subscribe((x) => this.db.Query("user").Update(this.UserData));
+            FileVersionInfo ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
 
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
             this.PlayingGameString.Value = "---";
             this.PlayingTimeString.Value = "";
             this.SearchGameString.Value = "";
+            this.VersionString.Value = "ADVNow Version " + ver.FileVersion;
 
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
