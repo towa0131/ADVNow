@@ -69,6 +69,8 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<string> VersionString { get; set; } = new ReactiveProperty<string>();
 
+        public Action onClose;
+
         private QueryFactory db;
 
         public MainWindowViewModel()
@@ -81,7 +83,8 @@ namespace ADVNow.ViewModels
                 Directory.CreateDirectory(documentFolder);
             }
             string gameDBFile = documentFolder + "\\games.db";
-            if (File.Exists(gameDBFile))
+            string gameDBLockFile = documentFolder + "\\games.lock";
+            if (File.Exists(gameDBFile) && !File.Exists(gameDBLockFile))
             {
                 this.API = new NovelGameAPI(new SQLiteDatabase(gameDBFile));
             }
@@ -90,9 +93,12 @@ namespace ADVNow.ViewModels
                 this.API = new NovelGameAPI(new ErogameScapeDatabase());
                 Task downloadTask = new Task(async () =>
                 {
+                    FileStream fs = File.Create(gameDBLockFile);
+                    fs.Close();
                     IExportableDatabase db = new ErogameScapeDatabase();
                     await db.ExportToSQLite3(gameDBFile);
                     this.API = new NovelGameAPI(new SQLiteDatabase(gameDBFile));
+                    File.Delete(gameDBLockFile);
                 });
                 downloadTask.Start();
             }
