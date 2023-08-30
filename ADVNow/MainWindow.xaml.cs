@@ -37,6 +37,10 @@ namespace ADVNow
         {
             ((MainWindowViewModel)this.DataContext).RemoveGameCmd.Execute(null);
         }
+        private void ErogameScape_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowViewModel)this.DataContext).MoveErogameScapeCmd.Execute(null);
+        }
 
         private void SearchGame_TextChanged(ModernWpf.Controls.AutoSuggestBox sender, ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -52,6 +56,10 @@ namespace ADVNow
             {
                 ((MainWindowViewModel)this.DataContext).SearchGameString.Value = sender.Text;
             }
+        }
+        private void GameDataGrid_Row_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            (sender as DataGridCell).ContextMenu = GameDataGrid.Resources["DataGridContextMenu"] as ContextMenu;
         }
     }
 }

@@ -141,7 +141,7 @@
             <Grid Grid.Row="1">
                 <DataGrid
                     AutoGenerateColumns="False"  
-                    Name="GameDataGrid"
+                    x:Name="GameDataGrid"
                     IsReadOnly="True"
                     SelectionMode="Single"
                     SelectionUnit="FullRow"
@@ -149,6 +149,16 @@
                     Opacity="0.55"
                     Foreground="#333"
                     ItemsSource="{Binding Games}">
+                    <DataGrid.Resources>
+                        <ContextMenu x:Key="DataGridContextMenu">
+                            <MenuItem Header="ErogameScapeへ移動" Click="ErogameScape_Click" />
+                            <Separator />
+                            <MenuItem Header="削除" Click="RemoveButton_Click" />
+                        </ContextMenu>
+                        <Style TargetType="DataGridCell">
+                            <EventSetter Event="MouseRightButtonUp" Handler="GameDataGrid_Row_MouseRightButtonUp"/>
+                        </Style>
+                    </DataGrid.Resources>
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                             <Setter Property="BorderThickness" Value="0" />
