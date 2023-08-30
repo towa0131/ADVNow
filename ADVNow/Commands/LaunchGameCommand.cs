@@ -90,20 +90,17 @@ namespace ADVNow.Commands
                             this._vm.PlayingTimeString.Value = String.Format("{0:D2}:{1:D2}:{2:D2}", hour, min, sec);
                         };
 
-                        if (this._isShowing)
+                        using (FileStream fileStream = File.OpenRead(imagePath))
                         {
-                            using (FileStream fileStream = File.OpenRead(imagePath))
+                            using (HttpClient httpClient = new HttpClient())
                             {
-                                using (HttpClient httpClient = new HttpClient())
-                                {
-                                    ImageEndpoint imageEndpoint = new ImageEndpoint(this._imgurClient, httpClient);
-                                    IImage imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
-                                    this._imageUrl = imageUpload.Link;
-                                }
+                                ImageEndpoint imageEndpoint = new ImageEndpoint(this._imgurClient, httpClient);
+                                IImage imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
+                                this._imageUrl = imageUpload.Link;
                             }
-
-                            this.SetPresence(game);
                         }
+
+                        if (this._isShowing) this.SetPresence(game);
 
                         this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                         this._vm.PlayingTimeString.Value = "00:00:00";
