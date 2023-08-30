@@ -151,9 +151,17 @@
                     ItemsSource="{Binding Games}">
                     <DataGrid.Resources>
                         <ContextMenu x:Key="DataGridContextMenu">
-                            <MenuItem Header="ErogameScapeへ移動" Click="ErogameScape_Click" />
+                            <MenuItem Header="ErogameScapeへ移動" Click="ErogameScape_Click">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Glyph="&#xE8A7;" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <Separator />
-                            <MenuItem Header="削除" Click="RemoveButton_Click" />
+                            <MenuItem Header="削除" Click="RemoveButton_Click">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Glyph="&#xE74D;" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                         </ContextMenu>
                         <Style TargetType="DataGridCell">
                             <EventSetter Event="MouseRightButtonUp" Handler="GameDataGrid_Row_MouseRightButtonUp"/>
