@@ -1,18 +1,20 @@
-﻿using ADVNow.Models;
-using ADVNow.ViewModels;
-using DiscordRPC;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Timers;
+using System.Drawing;
+using System.Net.Http;
 using NovelGameLib.Entity;
-using System.ComponentModel;
+using ADVNow.Models;
+using ADVNow.ViewModels;
+using Imgur.API.Endpoints;
+using Imgur.API.Models;
+using Imgur.API.Authentication;
+using DiscordRPC;
 
 namespace ADVNow.Commands
 {
@@ -24,16 +26,21 @@ namespace ADVNow.Commands
 
         private DiscordRpcClient _rpcClient;
 
+        private ApiClient _imgurClient;
+
         private DateTime _startTime;
+
+        private string _imageUrl;
 
         private bool _isShowing;
 
         private string _token;
 
-        public LaunchGameCommand(MainWindowViewModel vm, string token)
+        public LaunchGameCommand(MainWindowViewModel vm, string rpcToken, string imgurToken)
         {
             this._vm = vm;
-            this._token = token;
+            this._token = rpcToken;
+            this._imgurClient = new ApiClient(imgurToken);
         }
 
         public bool CanExecute(object parameter)
@@ -52,9 +59,12 @@ namespace ADVNow.Commands
                     Task launchTask = new Task(async () =>
                     {
                         string path = game.Path;
+                        string imagePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow\\tmp.png";
                         ProcessStartInfo pinfo = new ProcessStartInfo();
                         pinfo.FileName = path;
                         Process? p = Process.Start(pinfo);
+                        Bitmap? icon = Icon.ExtractAssociatedIcon(path)?.ToBitmap() ?? null;
+                        icon?.Save(imagePath, System.Drawing.Imaging.ImageFormat.Png);
                         _rpcClient = new DiscordRpcClient(this._token);
                         this._rpcClient.Initialize();
                         Timer timer = new Timer(1000);
@@ -79,10 +89,25 @@ namespace ADVNow.Commands
                             int sec = totalSec % 60;
                             this._vm.PlayingTimeString.Value = String.Format("{0:D2}:{1:D2}:{2:D2}", hour, min, sec);
                         };
-                        timer.Start();
-                        if (this._isShowing) this.SetPresence(game);
+
+                        if (this._isShowing)
+                        {
+                            using (FileStream fileStream = File.OpenRead(imagePath))
+                            {
+                                using (HttpClient httpClient = new HttpClient())
+                                {
+                                    ImageEndpoint imageEndpoint = new ImageEndpoint(this._imgurClient, httpClient);
+                                    IImage imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
+                                    this._imageUrl = imageUpload.Link;
+                                }
+                            }
+
+                            this.SetPresence(game);
+                        }
+
                         this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                         this._vm.PlayingTimeString.Value = "00:00:00";
+                        timer.Start();
                         p?.WaitForExit();
                         timer.EndInit();
                         this._rpcClient.Dispose();
@@ -110,6 +135,7 @@ namespace ADVNow.Commands
 
         private async void SetPresence(Game game)
         {
+            NovelGame? ng = await this._vm.API.SearchGameByName(game.Title);
             RichPresence presence = new RichPresence()
             {
                 Details = game.Title + " をプレイ中",
@@ -119,28 +145,20 @@ namespace ADVNow.Commands
                 {
                     new Button()
                     {
-                        Url = "https://example.com",
-                        Label = "Dummy"
+                        Url = Uri.IsWellFormedUriString(ng?.OHP, UriKind.Absolute) ? ng.OHP : "https://example.com",
+                        Label = "ホームページ"
                     }
+                },
+                Assets = new Assets()
+                {
+                    LargeImageKey = this._imageUrl
                 }
             };
-            NovelGame? ng = await this._vm.API.SearchGameByName(game.Title);
             this._rpcClient.SetPresence(presence);
-            if (ng != null)
+            if (ng == null)
             {
-                if (Uri.IsWellFormedUriString(ng.OHP, UriKind.Absolute))
-                {
-                    this._rpcClient.SetButton(new Button()
-                    {
-                        Url = ng.OHP,
-                        Label = "ホームページ"
-                    });
-                }
-                else
-                {
-                    // Remove All Buttons
-                    this._rpcClient.UpdateButtons();
-                }
+                // Remove All Buttons
+                this._rpcClient.UpdateButtons();
             }
         }
     }

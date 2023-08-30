@@ -148,7 +148,7 @@ namespace ADVNow.ViewModels
             this.ExitCmd = new ExitCommand();
             this.SetBackgroundCmd = new SetBackgroundCommand(this);
             this.AddGameCmd = new AddGameCommand(this);
-            this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155");
+            this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155", "f907931f3e0c24d");
             this.RemoveGameCmd = new RemoveGameCommand(this);
 
             // Property Subscribe
