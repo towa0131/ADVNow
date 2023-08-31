@@ -70,20 +70,10 @@ namespace ADVNow.Commands
                         {
                             string path = game.Path;
                             string documentFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
-                            string cmdPath = documentFolder + "\\start.bat";
                             string imagePath = documentFolder + "\\tmp.png";
-                            string cmdfileData = "@echo off\r\n" +
-                                                 "cd /d " + Path.GetDirectoryName(path) + "\r\n" +
-                                                 "start /wait " + Path.GetFileName(path);
-                            using (StreamWriter sw = new StreamWriter(cmdPath, false, Encoding.GetEncoding("Shift_JIS")))
-                            {
-                                sw.NewLine = "\r\n";
-                                sw.Write(cmdfileData);
-                                sw.Close();
-                            }
                             ProcessStartInfo pinfo = new ProcessStartInfo();
-                            pinfo.FileName = cmdPath;
-                            pinfo.CreateNoWindow = true;
+                            pinfo.WorkingDirectory = Path.GetDirectoryName(path);
+                            pinfo.FileName = path;
                             pinfo.UseShellExecute = false;
                             Process? p = Process.Start(pinfo);
                             this._vm.PlayingGameProcessId = p.Id;
@@ -126,7 +116,6 @@ namespace ADVNow.Commands
                             }
 
                             File.Delete(imagePath);
-                            File.Delete(cmdPath);
 
                             if (this._isShowing) this.SetPresence(game);
 
