@@ -52,6 +52,11 @@ namespace ADVNow.Commands
         {
             this._isShowing = this._vm.DiscordStatus.Value;
             Game game = this._vm.CurrentGame.Value;
+            if (this._vm.PlayingGameProcessId != -1)
+            {
+                MessageBox.Show("他のゲームがすでに起動されています。");
+                return;
+            }
             if (game != null)
             {
                 if (File.Exists(game.Path))
@@ -65,6 +70,7 @@ namespace ADVNow.Commands
                             ProcessStartInfo pinfo = new ProcessStartInfo();
                             pinfo.FileName = path;
                             Process? p = Process.Start(pinfo);
+                            this._vm.PlayingGameProcessId = p.Id;
                             Bitmap? icon = Icon.ExtractAssociatedIcon(path)?.ToBitmap() ?? null;
                             icon?.Save(imagePath, System.Drawing.Imaging.ImageFormat.Png);
                             _rpcClient = new DiscordRpcClient(this._token);
@@ -110,7 +116,6 @@ namespace ADVNow.Commands
                             this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                             this._vm.PlayingTimeString.Value = "00:00:00";
                             this._vm.ShareButtonVisibility.Value = "Visible";
-                            this._vm.PlayingGameProcessId = p.Id;
                             timer.Start();
                             p?.WaitForExit();
                             timer.EndInit();
