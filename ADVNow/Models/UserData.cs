@@ -11,5 +11,7 @@ namespace ADVNow.Models
         public string Background { get; set; }
 
         public bool DiscordStatus { get; set; }
+
+        public bool ShareWithImage { get; set; }
     }
 }

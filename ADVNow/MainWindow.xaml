@@ -52,6 +52,10 @@
                         Header="Discordにステータスを表示(_D)"
                         IsCheckable="True"
                         IsChecked="{Binding DiscordStatus.Value}" />
+                    <MenuItem
+                        Header="プレイ情報の共有にスクリーンショットを含める(_S)"
+                        IsCheckable="True"
+                        IsChecked="{Binding ShareWithImage.Value}" />
                 </MenuItem>
             </Menu>
         </Grid>

@@ -53,6 +53,8 @@ namespace ADVNow.ViewModels
 
         public ReactiveProperty<bool> DiscordStatus { get; set; }
 
+        public ReactiveProperty<bool> ShareWithImage { get; set; }
+
         public ReactiveCollection<string> BrandList { get; set; } = new ReactiveCollection<string>();
 
         public ReactiveCollection<int> YearList { get; set; } = new ReactiveCollection<int>();
@@ -74,6 +76,8 @@ namespace ADVNow.ViewModels
         public ReactiveProperty<string> VersionString { get; set; } = new ReactiveProperty<string>();
 
         public ReactiveProperty<string> ShareButtonVisibility { get; set; } = new ReactiveProperty<string>();
+
+        public int PlayingGameProcessId;
 
         public Action onClose;
 
@@ -128,13 +132,15 @@ namespace ADVNow.ViewModels
             // Load User Data
             command.CommandText = "CREATE TABLE IF NOT EXISTS user(" +
                 "Background TEXT, " +
-                "DiscordStatus BOOL)";
+                "DiscordStatus BOOL, " +
+                "ShareWithImage BOOL)";
             if (command.ExecuteNonQuery() != -1)
             {
                 this.UserData = new UserData()
                 {
                     Background = "",
-                    DiscordStatus = true
+                    DiscordStatus = true,
+                    ShareWithImage = true
                 };
                 this.db.Query("user").Insert(this.UserData);
             }
@@ -145,8 +151,10 @@ namespace ADVNow.ViewModels
 
             this.BackgroundImage = ReactiveProperty.FromObject(this.UserData, x => x.Background);
             this.DiscordStatus = ReactiveProperty.FromObject(this.UserData, x => x.DiscordStatus);
+            this.ShareWithImage = ReactiveProperty.FromObject(this.UserData, x => x.ShareWithImage);
             this.BackgroundImage.Subscribe((x) => this.db.Query("user").Update(this.UserData));
             this.DiscordStatus.Subscribe((x) => this.db.Query("user").Update(this.UserData));
+            this.ShareWithImage.Subscribe((x) => this.db.Query("user").Update(this.UserData));
 
             this.ShowType.Value = 0;
             this.SelectedList.Value = 0;
@@ -156,6 +164,8 @@ namespace ADVNow.ViewModels
             this.ShareButtonVisibility.Value = "Hidden";
             this.VersionString.Value = "ADVNow Version " + Assembly.GetExecutingAssembly().GetName().Version;
 
+            this.PlayingGameProcessId = -1;
+
             // Commands
             this.UpdateGameListCmd = new UpdateGameListCommand(this);
             this.ExitCmd = new ExitCommand();
@@ -164,7 +174,7 @@ namespace ADVNow.ViewModels
             this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155", "f907931f3e0c24d");
             this.RemoveGameCmd = new RemoveGameCommand(this);
             this.MoveErogameScapeCmd = new MoveErogameScapeCommand(this);
-            this.ShareGameCmd = new ShareGameCommand(this);
+            this.ShareGameCmd = new ShareGameCommand(this, "f907931f3e0c24d");
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
