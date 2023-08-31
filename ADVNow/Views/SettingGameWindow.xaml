@@ -47,10 +47,10 @@
                     <Button x:Name="pathButton" HorizontalAlignment="Right" Command="{Binding SelectGamePathCmd}" Content="参照" />
                 </Grid>
             </Grid>
-            <Button x:Name="addButton"
+            <Button x:Name="submitButton"
                     Command="{Binding SettingGameSubmitCmd}"
                     DockPanel.Dock="Top"
-                    Content="追加"
+                    Content="決定"
                     HorizontalAlignment="Center"
                     Style="{StaticResource AccentButtonStyle}"
                     Width="100"
