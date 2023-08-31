@@ -15,6 +15,8 @@ using Imgur.API.Endpoints;
 using Imgur.API.Models;
 using Imgur.API.Authentication;
 using DiscordRPC;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
 
 namespace ADVNow.Commands
 {
@@ -38,6 +40,7 @@ namespace ADVNow.Commands
 
         public LaunchGameCommand(MainWindowViewModel vm, string rpcToken, string imgurToken)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             this._vm = vm;
             this._token = rpcToken;
             this._imgurClient = new ApiClient(imgurToken);
@@ -66,9 +69,22 @@ namespace ADVNow.Commands
                         Task launchTask = new Task(async () =>
                         {
                             string path = game.Path;
-                            string imagePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow\\tmp.png";
+                            string documentFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
+                            string cmdPath = documentFolder + "\\start.bat";
+                            string imagePath = documentFolder + "\\tmp.png";
+                            string cmdfileData = "@echo off\r\n" +
+                                                 "cd /d " + Path.GetDirectoryName(path) + "\r\n" +
+                                                 "start /wait " + Path.GetFileName(path);
+                            using (StreamWriter sw = new StreamWriter(cmdPath, false, Encoding.GetEncoding("Shift_JIS")))
+                            {
+                                sw.NewLine = "\r\n";
+                                sw.Write(cmdfileData);
+                                sw.Close();
+                            }
                             ProcessStartInfo pinfo = new ProcessStartInfo();
-                            pinfo.FileName = path;
+                            pinfo.FileName = cmdPath;
+                            pinfo.CreateNoWindow = true;
+                            pinfo.UseShellExecute = false;
                             Process? p = Process.Start(pinfo);
                             this._vm.PlayingGameProcessId = p.Id;
                             Bitmap? icon = Icon.ExtractAssociatedIcon(path)?.ToBitmap() ?? null;
@@ -110,6 +126,7 @@ namespace ADVNow.Commands
                             }
 
                             File.Delete(imagePath);
+                            File.Delete(cmdPath);
 
                             if (this._isShowing) this.SetPresence(game);
 
