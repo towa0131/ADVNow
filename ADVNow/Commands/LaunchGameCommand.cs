@@ -103,6 +103,8 @@ namespace ADVNow.Commands
                                 }
                             }
 
+                            File.Delete(imagePath);
+
                             if (this._isShowing) this.SetPresence(game);
 
                             this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
