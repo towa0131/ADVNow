@@ -33,10 +33,16 @@ namespace ADVNow
             ((MainWindowViewModel)this.DataContext).LaunchGameCmd.Execute(null);
         }
 
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindowViewModel)this.DataContext).SettingGameCmd.Execute(null);
+        }
+
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             ((MainWindowViewModel)this.DataContext).RemoveGameCmd.Execute(null);
         }
+
         private void ErogameScape_Click(object sender, RoutedEventArgs e)
         {
             ((MainWindowViewModel)this.DataContext).MoveErogameScapeCmd.Execute(null);

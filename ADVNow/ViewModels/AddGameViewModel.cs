@@ -32,7 +32,7 @@ using System.Reflection.Metadata;
 
 namespace ADVNow.ViewModels
 {
-    internal class AddGameViewModel : INotifyPropertyChanged
+    internal class AddGameViewModel : INotifyPropertyChanged, IAddGameViewModel
     {
         public ReactiveProperty<string> SearchGameString { get; set; } = new ReactiveProperty<string>();
 
@@ -66,6 +66,16 @@ namespace ADVNow.ViewModels
                     {
                         this.SuggestedGameStrings.Add(game.Title);
                     }
+                }
+            });
+            this.Path.Subscribe(async (t) =>
+            {
+                string? folderPath = System.IO.Path.GetDirectoryName(t);
+                if (folderPath != null)
+                {
+                    string folderName = System.IO.Path.GetFileName(folderPath);
+                    NovelGame? game = await this._mainVM.API.SearchGameByName(folderName);
+                    if (game != null) this.SearchGameString.Value = game.Title;
                 }
             });
         }

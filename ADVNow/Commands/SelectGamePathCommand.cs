@@ -16,9 +16,9 @@ namespace ADVNow.Commands
     {
         public event EventHandler CanExecuteChanged;
 
-        private AddGameViewModel _vm;
+        private IAddGameViewModel _vm;
 
-        public SelectGamePathCommand(AddGameViewModel vm)
+        public SelectGamePathCommand(IAddGameViewModel vm)
         {
             this._vm = vm;
         }
@@ -37,13 +37,6 @@ namespace ADVNow.Commands
             {
                 string file = dialog.FileName;
                 this._vm.Path.Value = file;
-                string? folderPath = System.IO.Path.GetDirectoryName(file);
-                if (folderPath != null)
-                {
-                    string folderName = System.IO.Path.GetFileName(folderPath);
-                    NovelGame? game = await this._vm._mainVM.API.SearchGameByName(folderName);
-                    if (game != null) this._vm.SearchGameString.Value = game.Title;
-                }
             }
         }
     }

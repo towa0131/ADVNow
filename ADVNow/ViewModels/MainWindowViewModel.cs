@@ -37,6 +37,8 @@ namespace ADVNow.ViewModels
 
         public ICommand AddGameCmd { get; set; }
 
+        public ICommand SettingGameCmd { get; set; }
+
         public ICommand LaunchGameCmd { get; set; }
 
         public ICommand RemoveGameCmd { get; set; }
@@ -175,6 +177,7 @@ namespace ADVNow.ViewModels
             this.RemoveGameCmd = new RemoveGameCommand(this);
             this.MoveErogameScapeCmd = new MoveErogameScapeCommand(this);
             this.ShareGameCmd = new ShareGameCommand(this, "f907931f3e0c24d");
+            this.SettingGameCmd = new SettingGameCommand(this);
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
