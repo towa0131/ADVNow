@@ -129,7 +129,7 @@
                                VerticalAlignment="Center" />
                 </Grid>
                 <Grid Grid.Column="2">
-                    <ui:AppBarButton x:Name="ShareButton" LabelPosition="Collapsed" VerticalAlignment="Center">
+                    <ui:AppBarButton x:Name="ShareButton" LabelPosition="Collapsed" VerticalAlignment="Center" Command="{Binding ShareGameCmd}" Visibility="{Binding ShareButtonVisibility.Value}">
                         <ui:AppBarButton.Icon>
                             <ui:FontIcon
                             Glyph="&#xE72D;"

@@ -107,6 +107,7 @@ namespace ADVNow.Commands
 
                             this._vm.PlayingGameString.Value = game.Title + " をプレイ中";
                             this._vm.PlayingTimeString.Value = "00:00:00";
+                            this._vm.ShareButtonVisibility.Value = "Visible";
                             timer.Start();
                             p?.WaitForExit();
                             timer.EndInit();
@@ -123,6 +124,7 @@ namespace ADVNow.Commands
                             }
                             this._vm.PlayingGameString.Value = "---";
                             this._vm.PlayingTimeString.Value = "";
+                            this._vm.ShareButtonVisibility.Value = "Hidden";
                         });
                         launchTask.Start();
                     }

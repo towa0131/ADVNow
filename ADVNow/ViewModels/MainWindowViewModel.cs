@@ -43,6 +43,8 @@ namespace ADVNow.ViewModels
 
         public ICommand MoveErogameScapeCmd { get; set; }
 
+        public ICommand ShareGameCmd { get; set; }
+
         public NovelGameAPI API { get; set; }
 
         public UserData UserData;
@@ -70,6 +72,8 @@ namespace ADVNow.ViewModels
         public ReactiveProperty<string> SearchGameString { get; set; } = new ReactiveProperty<string>();
 
         public ReactiveProperty<string> VersionString { get; set; } = new ReactiveProperty<string>();
+
+        public ReactiveProperty<string> ShareButtonVisibility { get; set; } = new ReactiveProperty<string>();
 
         public Action onClose;
 
@@ -149,6 +153,7 @@ namespace ADVNow.ViewModels
             this.PlayingGameString.Value = "---";
             this.PlayingTimeString.Value = "";
             this.SearchGameString.Value = "";
+            this.ShareButtonVisibility.Value = "Hidden";
             this.VersionString.Value = "ADVNow Version " + Assembly.GetExecutingAssembly().GetName().Version;
 
             // Commands
@@ -159,6 +164,7 @@ namespace ADVNow.ViewModels
             this.LaunchGameCmd = new LaunchGameCommand(this, "770721176355078155", "f907931f3e0c24d");
             this.RemoveGameCmd = new RemoveGameCommand(this);
             this.MoveErogameScapeCmd = new MoveErogameScapeCommand(this);
+            this.ShareGameCmd = new ShareGameCommand(this);
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
