@@ -13,6 +13,18 @@ namespace ADVNow.Utils
     class WindowUtil
     {
         [DllImport("user32.dll")]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr LoadIcon(IntPtr hInstance, IntPtr lpIconName);
+
+        [DllImport("user32.dll", EntryPoint = "GetClassLong")]
+        static extern uint GetClassLong32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetClassLongPtr")]
+        static extern IntPtr GetClassLong64(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
         private static extern bool PrintWindow(IntPtr hwnd, IntPtr hdcBlt, uint nFlags);
 
         [DllImport("user32.dll")]
@@ -26,6 +38,14 @@ namespace ADVNow.Utils
             public int Right;
             public int Bottom;
         }
+
+        public static uint WM_GETICON = 0x007F;
+
+        public static IntPtr ICON_BIG = new IntPtr(1);
+
+        public static IntPtr IDI_APPLICATION = new IntPtr(0x7F00);
+
+        public static int GCL_HICON = -14;
 
         public static Bitmap? CaptureWindow(IntPtr hwnd)
         {
@@ -52,6 +72,33 @@ namespace ADVNow.Utils
             bmp = Crop(bmp, rect);
 
             return bmp;
+        }
+
+        public static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
+        {
+            if (IntPtr.Size == 4)
+                return new IntPtr((long)GetClassLong32(hWnd, nIndex));
+            else
+                return GetClassLong64(hWnd, nIndex);
+        }
+
+        public static Bitmap? GetSmallWindowIcon(IntPtr hWnd)
+        {
+            try
+            {
+                IntPtr hIcon = default(IntPtr);
+
+                hIcon = SendMessage(hWnd, WM_GETICON, ICON_BIG, 0);
+
+                if (hIcon == IntPtr.Zero) hIcon = GetClassLongPtr(hWnd, GCL_HICON);
+
+                if (hIcon != IntPtr.Zero) return new Bitmap(Icon.FromHandle(hIcon).ToBitmap(), 64, 64);
+                else return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static Rectangle GetRect(Bitmap bmp)

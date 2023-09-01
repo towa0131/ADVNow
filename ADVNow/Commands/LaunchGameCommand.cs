@@ -17,6 +17,8 @@ using Imgur.API.Authentication;
 using DiscordRPC;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text;
+using ADVNow.Utils;
+using System.Drawing.Imaging;
 
 namespace ADVNow.Commands
 {
@@ -38,12 +40,16 @@ namespace ADVNow.Commands
 
         private string _token;
 
+        private Bitmap? _icon;
+
         public LaunchGameCommand(MainWindowViewModel vm, string rpcToken, string imgurToken)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             this._vm = vm;
             this._token = rpcToken;
             this._imgurClient = new ApiClient(imgurToken);
+            this._imageUrl = "";
+            this._icon = null;
         }
 
         public bool CanExecute(object parameter)
@@ -77,8 +83,6 @@ namespace ADVNow.Commands
                             pinfo.UseShellExecute = false;
                             Process? p = Process.Start(pinfo);
                             this._vm.PlayingGameProcessId = p.Id;
-                            Bitmap? icon = Icon.ExtractAssociatedIcon(path)?.ToBitmap() ?? null;
-                            icon?.Save(imagePath, System.Drawing.Imaging.ImageFormat.Png);
                             _rpcClient = new DiscordRpcClient(this._token);
                             this._rpcClient.Initialize();
                             Timer timer = new Timer(1000);
@@ -103,19 +107,45 @@ namespace ADVNow.Commands
                                 int min = (totalSec % 3600) / 60;
                                 int sec = totalSec % 60;
                                 this._vm.PlayingTimeString.Value = String.Format("{0:D2}:{1:D2}:{2:D2}", hour, min, sec);
-                            };
 
-                            using (FileStream fileStream = File.OpenRead(imagePath))
-                            {
-                                using (HttpClient httpClient = new HttpClient())
+                                if (this._icon == null)
                                 {
-                                    ImageEndpoint imageEndpoint = new ImageEndpoint(this._imgurClient, httpClient);
-                                    IImage imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
-                                    this._imageUrl = imageUpload.Link;
-                                }
-                            }
+                                    IntPtr hwnd = p.MainWindowHandle;
+                                    Bitmap? icon = WindowUtil.GetSmallWindowIcon(hwnd);
+                                    if (icon != null)
+                                    {
+                                        this._icon = icon;
+                                        try
+                                        {
+                                            using (MemoryStream memory = new MemoryStream())
+                                            {
+                                                using (FileStream fs = new FileStream(imagePath, FileMode.Create, FileAccess.ReadWrite))
+                                                {
+                                                    icon?.Save(memory, ImageFormat.Png);
+                                                    byte[] bytes = memory.ToArray();
+                                                    fs.Write(bytes, 0, bytes.Length);
 
-                            File.Delete(imagePath);
+                                                }
+                                            }
+                                            using (FileStream fileStream = File.OpenRead(imagePath))
+                                            {
+                                                using (HttpClient httpClient = new HttpClient())
+                                                {
+                                                    ImageEndpoint imageEndpoint = new ImageEndpoint(this._imgurClient, httpClient);
+                                                    IImage imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
+                                                    this._imageUrl = imageUpload.Link;
+                                                }
+                                            }
+                                            this.SetPresence(game);
+                                            File.Delete(imagePath);
+                                        }
+                                        catch
+                                        {
+                                            // アイコンファイルがロックされている
+                                        }
+                                    }
+                                }
+                            };
 
                             if (this._isShowing) this.SetPresence(game);
 
@@ -140,6 +170,8 @@ namespace ADVNow.Commands
                             this._vm.PlayingTimeString.Value = "";
                             this._vm.ShareButtonVisibility.Value = "Hidden";
                             this._vm.PlayingGameProcessId = -1;
+                            this._imageUrl = "";
+                            this._icon = null;
                         });
                         launchTask.Start();
                     }
