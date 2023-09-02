@@ -46,6 +46,8 @@ namespace ADVNow.ViewModels
 
         public Action CloseWindowAction { get; set; }
 
+        public MainWindowViewModel MainVM { get => this._mainVM; }
+
         public MainWindowViewModel _mainVM;
 
         public AddGameViewModel(MainWindowViewModel vm)

@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using NovelGameLib.Entity;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,9 +31,18 @@ namespace ADVNow.Commands
 
         public async void Execute(object parameter)
         {
+            string directory = "";
+            if (this._vm.MainVM.CurrentGame.Value != null) directory = Path.GetDirectoryName(this._vm.MainVM.CurrentGame.Value.Path);
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "exeファイル|*.exe";
-
+            if (Path.Exists(directory))
+            {
+                dialog.InitialDirectory = directory;
+            }
+            else
+            {
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "\\ADVNow";
+            }
             if (dialog.ShowDialog() == true)
             {
                 string file = dialog.FileName;

@@ -13,5 +13,7 @@ namespace ADVNow.ViewModels
         public ICommand SelectGamePathCmd { get; set; }
 
         public ReactiveProperty<string> Path { get; set; }
+
+        public MainWindowViewModel MainVM { get; }
     }
 }
