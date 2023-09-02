@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -317,24 +316,30 @@ namespace ADVNow.ViewModels
 
             // Load All Games
             command.CommandText = "CREATE TABLE IF NOT EXISTS games(" +
-            "Title TEXT, " +
-            "Id TEXT, " +
-            "Brand TEXT, " +
-            "Path TEXT, " +
-            "TotalPlayMinutes INTEGER, " +
-            "LastPlay DATE, " +
-            "SellDay DATE)";
+                                  "Title TEXT, " +
+                                  "Id TEXT, " +
+                                  "Brand TEXT, " +
+                                  "Path TEXT, " +
+                                  "TotalPlayMinutes INTEGER, " +
+                                  "LastPlay DATE, " +
+                                  "SellDay DATE)";
             command.ExecuteNonQuery();
-            List<Game> games = this.db.Query("games").OrderByDesc("LastPlay").Get<Game>().ToList();
-            foreach (Game game in games)
-            {
-                this.AllGames.Add(game);
-            }
+            this.LoadGamesFromDB();
         }
 
         public bool canExcuteCommand()
         {
             return true;
+        }
+
+        public void LoadGamesFromDB()
+        {
+            this.AllGames.Clear();
+            List<Game> games = this.db.Query("games").OrderByDesc("LastPlay").Get<Game>().ToList();
+            foreach (Game game in games)
+            {
+                this.AllGames.Add(game);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

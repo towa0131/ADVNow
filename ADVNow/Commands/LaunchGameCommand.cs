@@ -166,6 +166,7 @@ namespace ADVNow.Commands
                                     break;
                                 }
                             }
+                            this._vm.LoadGamesFromDB();
                             this._vm.PlayingGameString.Value = "---";
                             this._vm.PlayingTimeString.Value = "";
                             this._vm.ShareButtonVisibility.Value = "Hidden";
