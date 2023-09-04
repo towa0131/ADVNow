@@ -335,6 +335,7 @@ namespace ADVNow.ViewModels
         public void LoadGamesFromDB()
         {
             this.AllGames.Clear();
+            this.Games.Clear();
             List<Game> games = this.db.Query("games").OrderByDesc("LastPlay").Get<Game>().ToList();
             foreach (Game game in games)
             {
