@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ADVNow.Models;
 using ADVNow.ViewModels;
+using ModernWpf;
 
 namespace ADVNow
 {
@@ -26,6 +27,7 @@ namespace ADVNow
         {
             InitializeComponent();
             this.DataContext = new MainWindowViewModel();
+            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
