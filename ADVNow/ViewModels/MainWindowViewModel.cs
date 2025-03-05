@@ -46,6 +46,8 @@ namespace ADVNow.ViewModels
 
         public ICommand ShareGameCmd { get; set; }
 
+        public ICommand ScreenshotCmd { get; set; }
+
         public NovelGameAPI API { get; set; }
 
         public UserData UserData;
@@ -177,6 +179,7 @@ namespace ADVNow.ViewModels
             this.MoveErogameScapeCmd = new MoveErogameScapeCommand(this);
             this.ShareGameCmd = new ShareGameCommand(this, "f907931f3e0c24d");
             this.SettingGameCmd = new SettingGameCommand(this);
+            this.ScreenshotCmd = new ScreenshotCommand(this);
 
             // Property Subscribe
             this.AllGames.ObserveAddChanged().Subscribe((game) =>
